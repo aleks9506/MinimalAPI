@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "DqPJpEgZ0wE=",
+  "success": true,
+  "projectFilePath": "C:\\Development\\CursoMinimalAPI\\MinimalAPI\\ToDo\\Api\\Api.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\alejo\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.12\\microsoft.aspnetcore.openapi.10.0.12.nupkg.sha512",
+    "C:\\Users\\alejo\\.nuget\\packages\\microsoft.openapi\\2.12.0\\microsoft.openapi.2.12.0.nupkg.sha512",
+    "C:\\Users\\alejo\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\10.3.0\\swashbuckle.aspnetcore.swaggerui.10.3.0.nupkg.sha512"
+  ],
+  "logs": []
+}
