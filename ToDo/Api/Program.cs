@@ -1,4 +1,15 @@
+using ToDo.Infrasctructure;
+using ToDo.Application;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddApplicationServices();
+builder.Services.AddDataRepositories();
+
+builder.Services.AddToDbContext(
+        builder.Configuration
+    );
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
