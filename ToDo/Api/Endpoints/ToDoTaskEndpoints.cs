@@ -14,7 +14,22 @@ namespace ToDo.Api.Endpoints
                 .ProducesValidationProblem()
                 .ProducesProblem(StatusCodes.Status500InternalServerError);
 
+            group.MapGet("{id:int}", Get)
+                .Produces<GetToDoTaskDto>(StatusCodes.Status200OK)
+                .ProducesProblem(StatusCodes.Status404NotFound)
+                .ProducesProblem(StatusCodes.Status500InternalServerError);
+
             return app;
+        }
+
+        public static async Task<Results<Ok<GetToDoTaskDto>, NotFound>> Get
+            (int id, 
+            IToDoTaskService toDoTaskService)
+        {
+            var toDoTask = await toDoTaskService.Get(id);
+            if (toDoTask == null) return TypedResults.NotFound();
+
+            return TypedResults.Ok(toDoTask);
         }
 
         public static async Task<Created> Create(
