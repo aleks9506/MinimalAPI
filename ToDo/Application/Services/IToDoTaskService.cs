@@ -9,5 +9,7 @@ namespace ToDo.Application.Services
         Task Create(CreateToDoTaskDto createToDoTask);
 
         Task<bool> Update(int id, UpdateToDoTaskDto updateToDoTask);
+
+        Task<bool> Delete(int id);
     }
 }

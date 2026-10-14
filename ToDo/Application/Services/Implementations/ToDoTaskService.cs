@@ -25,5 +25,10 @@ namespace ToDo.Application.Services.Implementations
         {
             return await _toDoTaskRepository.Update(id, updateToDoTask);
         }
+
+        public async Task<bool> Delete(int id)
+        {
+            return await _toDoTaskRepository.Delete(id);
+        }
     }
 }
