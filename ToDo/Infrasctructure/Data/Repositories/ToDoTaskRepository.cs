@@ -37,5 +37,18 @@ namespace ToDo.Infrasctructure.Data.Repositories
             });
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<bool> Update(int id, UpdateToDoTaskDto updateToDoTask)
+        {
+            var toDoTask = await _dbContext.ToDoTasks
+                .SingleOrDefaultAsync(x => x.Id == id && !x.Deleted.HasValue);
+
+            if (toDoTask == null) return false;
+
+            toDoTask.Task = updateToDoTask.Task;
+
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
     }
 }
