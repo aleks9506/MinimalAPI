@@ -8,21 +8,20 @@ namespace ToDo.Api.Endpoints
     {
         public static WebApplication MapToDoTaskEndpoints(this WebApplication app)
         {
-            var group = app.MapGroup("/api/todo-tasks");
+            var group = app.MapGroup("/api/to-do-tasks")
+                .ProducesProblem(StatusCodes.Status500InternalServerError);
 
             group.MapPost("/", Create)
-                .ProducesValidationProblem()
-                .ProducesProblem(StatusCodes.Status500InternalServerError);
+                .ProducesValidationProblem();
 
-            group.MapGet("{id:int}", Get)
-                .ProducesProblem(StatusCodes.Status500InternalServerError);
+            group.MapGet("{id:int}", Get);
+
+            group.MapGet("listing/{p:int:min(1)}", GetListing);
 
             group.MapPut("{id:int}", Update)
-                .ProducesValidationProblem()
-                .ProducesProblem(StatusCodes.Status500InternalServerError);
+                .ProducesValidationProblem();
 
-            group.MapDelete("{id:int}", Delete)
-                .ProducesProblem(StatusCodes.Status500InternalServerError);
+            group.MapDelete("{id:int}", Delete);
 
             return app;
         }
@@ -35,6 +34,21 @@ namespace ToDo.Api.Endpoints
             if (toDoTask == null) return TypedResults.NotFound();
 
             return TypedResults.Ok(toDoTask);
+        }
+
+        public static async Task<Results<Ok<ToDoTaskListingResultDto>, NotFound>> GetListing(
+            [AsParameters] ToDoTaskListingDto listing,
+            IToDoTaskService toDoTaskService
+            )
+        {
+            var result = await toDoTaskService.GetListing(listing);
+
+            if(listing.Page > 1 || listing.Page > result.TotalPages)
+            {
+                return TypedResults.NotFound();
+            }
+
+            return TypedResults.Ok(result);
         }
 
         public static async Task<Created> Create(

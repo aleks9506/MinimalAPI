@@ -6,9 +6,15 @@ namespace ToDo.Application.Services.Implementations
     public class ToDoTaskService : IToDoTaskService
     {
         private readonly IToDoTaskRepository _toDoTaskRepository;
+
         public ToDoTaskService(IToDoTaskRepository toDoTaskRepository)
         {
             _toDoTaskRepository = toDoTaskRepository;
+        }
+
+        public async Task<ToDoTaskListingResultDto> GetListing(ToDoTaskListingDto listing)
+        {
+            return await _toDoTaskRepository.GetListing(listing);
         }
 
         public async Task<GetToDoTaskDto?> Get(int id)
