@@ -6,6 +6,8 @@ namespace ToDo.Application.Data.Repositories
     {
         Task<GetToDoTaskDto?> Get(int id);
 
+        Task<ToDoTaskListingResultDto> GetListing(ToDoTaskListingDto listing);
+
         Task Create(CreateToDoTaskDto createToDoTask);
 
         Task<bool> Update(int id, UpdateToDoTaskDto updateToDoTask);
