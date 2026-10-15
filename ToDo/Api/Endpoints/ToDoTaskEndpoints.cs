@@ -28,14 +28,37 @@ namespace ToDo.Api.Endpoints
             return app;
         }
 
-        public static async Task<Results<Ok<GetToDoTaskDto>, NotFound>> Get
-            (int id, 
-            IToDoTaskService toDoTaskService)
+        public static async Task<Results<Ok<GetToDoTaskDto>, NotFound, InternalServerError>> Get
+            (int id,
+            IToDoTaskService toDoTaskService,
+            ILoggerFactory loggerFactory,
+            HttpContext httpContext)
         {
-            var toDoTask = await toDoTaskService.Get(id);
-            if (toDoTask == null) return TypedResults.NotFound();
+            var logger = loggerFactory.CreateLogger(
+                typeof(ToDoTaskEndpoints).FullName!
+                );
+            try
+            {
+                logger.LogDebug("Running Get method with Id: {Id}", id);
 
-            return TypedResults.Ok(toDoTask);
+                var toDoTask = await toDoTaskService.Get(id);
+
+                if (toDoTask == null)
+                {
+                    logger.LogDebug("The task is not found with Id: {Id}", id);
+                    return TypedResults.NotFound();
+                }
+
+                logger.LogDebug("The task is found with Id: {Id}", id);
+
+                return TypedResults.Ok(toDoTask);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Exception was thrown (id: {0}, User Agent: {1})",
+                    id, httpContext.Request.Headers.UserAgent);
+                return TypedResults.InternalServerError();
+            }
         }
 
         public static async Task<Results<Ok<ToDoTaskListingResultDto>, NotFound>> GetListing(
