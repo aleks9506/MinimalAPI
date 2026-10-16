@@ -115,5 +115,110 @@ namespace ApiTests
 
             Assert.IsType<InternalServerError>(act.Result);
         }
+
+        [Fact]
+        public async Task GetListing_WhenCalled_CallsService()
+        {
+            var listing = new ToDoTaskListingDto
+            {
+                Page = 1,
+                PageSize = 20
+            };
+            var act = await ToDoTaskEndpoints.GetListing(
+                listing,
+                _toDoTaskServiceMock.Object
+                );
+            _toDoTaskServiceMock.Verify(x => x.GetListing(listing), Times.Once);
+        }
+
+        [Theory]
+        [InlineData(3, 2)]
+        [InlineData(4, 3)]
+        [InlineData(6, 3)]
+        public async Task GetListing_PageGreaterThanTotalPages_ReturnsNotFound(int page, int totalPages)
+        {
+            var listing = new ToDoTaskListingDto
+            {
+                Page = page,
+                PageSize = 20
+            };
+
+            _toDoTaskServiceMock.Setup(x => x.GetListing(listing))
+                .ReturnsAsync(new ToDoTaskListingResultDto
+                {
+                    Results = [],
+                    TotalPages = totalPages,
+                    TotalResults = 10
+                });
+
+            var act = await ToDoTaskEndpoints.GetListing(
+                listing,
+                _toDoTaskServiceMock.Object
+                );
+
+            Assert.IsType<NotFound>(act.Result);
+        }
+
+        [Theory]
+        [InlineData(1, 0)]
+        [InlineData(2, 2)]
+        [InlineData(2, 3)]
+        public async Task GetListing_PageLessOrEqualToTotalPages_ReturnsOk(
+            int page, 
+            int totalPages
+            )
+        {
+            var listing = new ToDoTaskListingDto
+            {
+                Page = page,
+                PageSize = 20
+            };
+
+            _toDoTaskServiceMock.Setup(x => x.GetListing(listing))
+                .ReturnsAsync(new ToDoTaskListingResultDto
+                {
+                    Results = [],
+                    TotalPages = totalPages,
+                    TotalResults = 10
+                });
+
+            var act = await ToDoTaskEndpoints.GetListing(
+                listing,
+                _toDoTaskServiceMock.Object
+                );
+
+            Assert.IsType<Ok<ToDoTaskListingResultDto>>(act.Result);
+        }
+
+        [Theory]
+        [InlineData(1, 0)]
+        [InlineData(2, 2)]
+        [InlineData(2, 3)]
+        public async Task GetListing_PageLessOrEqualThanToPages_ReturnsExpectedResult(int page, int totalPages)
+        {
+            var listing = new ToDoTaskListingDto
+            {
+                Page = page,
+                PageSize = 20
+            };
+
+            var expectedResult = new ToDoTaskListingResultDto
+            {
+                Results = [],
+                TotalPages = totalPages,
+                TotalResults = 10
+            };
+
+            _toDoTaskServiceMock.Setup(x => x.GetListing(listing))
+                .ReturnsAsync(expectedResult);
+
+            var act = await ToDoTaskEndpoints.GetListing(
+                listing,
+                _toDoTaskServiceMock.Object
+                );
+
+            Assert.Equal(expectedResult, ((Ok<ToDoTaskListingResultDto>)act.Result).Value);
+        }
+
     }
 }
