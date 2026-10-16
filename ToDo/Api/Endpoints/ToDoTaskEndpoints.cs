@@ -11,7 +11,8 @@ namespace ToDo.Api.Endpoints
         {
             var group = app.MapGroup("/api/to-do-tasks")
                 .AddEndpointFilter<ToDoTaskEndpointFilter>()
-                .ProducesProblem(StatusCodes.Status500InternalServerError);
+                .ProducesProblem(StatusCodes.Status500InternalServerError)
+                .RequireAuthorization();
 
             group.MapPost("/", Create)
                 .ProducesValidationProblem();
