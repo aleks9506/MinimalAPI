@@ -6,6 +6,8 @@ using Serilog;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using ToDo.Application.Common.Handlers;
+using ToDo.Application.Common.Options;
+using Microsoft.AspNetCore.Authentication;
 
 namespace ToDo.Application
 {
@@ -38,6 +40,38 @@ namespace ToDo.Application
                 services.AddExceptionHandler<GlobalExceptionHandler>();
                 services.AddProblemDetails();
             }
+            return services;
+        }
+
+        public static IServiceCollection AddConfigurationOptions(
+            this IServiceCollection services
+            )
+        {
+            services.AddOptions<ApiOptions>()
+                .BindConfiguration("Api");
+
+            return services;
+        }
+
+
+        public static IServiceCollection AddApiKeyAuthorization(
+            this IServiceCollection services
+            )
+        {
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ApiKeyPolicy", policy =>
+                {
+                    policy.AddAuthenticationSchemes(ApiKeyAuthenticationHandler.SchemaName);
+                    policy.RequireAuthenticatedUser();
+                });
+            });
+
+            services.AddAuthentication()
+                .AddScheme<AuthenticationSchemeOptions, 
+                ApiKeyAuthenticationHandler>(
+                    ApiKeyAuthenticationHandler.SchemaName, 
+                    null);
             return services;
         }
     }
