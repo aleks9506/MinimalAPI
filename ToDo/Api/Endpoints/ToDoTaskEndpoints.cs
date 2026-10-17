@@ -69,7 +69,7 @@ namespace ToDo.Api.Endpoints
         {
             var result = await toDoTaskService.GetListing(listing);
 
-            if(listing.Page > 1 || listing.Page > result.TotalPages)
+            if(listing.Page > 1 && listing.Page > result.TotalPages)
             {
                 return TypedResults.NotFound();
             }
